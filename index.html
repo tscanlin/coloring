@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Tim Scanlin</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600" rel="stylesheet" type="text/css">
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html, body {
+        height: 100%;
+        margin: 0;
+        /*overflow: hidden;*/
+        padding: 0;
+      }
+
+      body {
+        font-family: 'Open Sans', 'Arial', sans-serif;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      #page {
+        height: inherit;
+        text-align: center;
+        /*overflow: hidden;*/
+        width: 100%;
+      }
+
+      #page:before {
+        content: '';
+        display: inline-block;
+        height: 100%;
+        vertical-align: middle;
+        margin-right: -0.25em; /* Adjusts for spacing */
+      }
+
+
+
+      #container, #container2 {
+        background-color: rgba(255,255,255,0.7);
+        border-radius: 2px;
+        display: inline-block;
+        max-width: 100%;
+        padding: 0 10px;
+        padding-bottom: 10px;
+        text-align: left;
+        vertical-align: middle;
+        width: 310px;
+      }
+
+    </style>
+
+
+
+
+  </head>
+
+  <body>
+    <div id="page">
+      <div id="container">
+
+      </div>
+
+      <div id="container2">
+
+      </div>
+
+      <svg id="background"></svg>
+
+      <div>http://jsfiddle.net/hAbe6/88/</div>
+      <div>http://www.checkman.io/please/</div>
+    </div>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.9/d3.min.js"></script>
+    <script src="coloring.js"></script>
+    <script>
+      var _gaq = _gaq || [];
+
+
+
+      var container = d3.select('#container');
+      var container2 = d3.select('#container2');
+
+      var count = d3.range(1024),
+          hue = 0,
+          hue_array = [],
+          hue_array2 = [],
+          hue_obj = {},
+          max_hue = 360,
+          lightness = 50,
+          saturation = 50,
+          golden_angle = 137.5,
+          golden_ratio = 0.61803398875;
+
+          // deviation = 10; // divide into 3rds
+
+      // console.log(count);
+
+      function listColors(i, hue, saturation, lightness) {
+        lightness = lightness || 50;
+        saturation = saturation || 50;
+
+        container.append('div')
+          .style('background-color', 'hsl('+ hue +', '+ saturation +'%, '+ lightness +'%)')
+          .style('height', '1em')
+          .style('width', '1em');
+
+        container.append('div')
+          .html('#' + i + ' (' + hue + ' - ' + saturation + ' - ' + lightness + ')<br><br>');
+      };
+
+      function listColors2(i, hue, saturation, lightness) {
+        lightness = lightness || 50;
+        saturation = saturation || 50;
+
+        container2.append('div')
+          .style('background-color', 'hsl('+ hue +', '+ saturation +'%, '+ lightness +'%)')
+          .style('height', '1em')
+          .style('width', '1em');
+
+        container2.append('div')
+          .html('#' + i + ' (' + hue + ' - ' + saturation + ' - ' + lightness + ')<br><br>');
+      };
+
+
+      count.forEach(function(d, i) {
+
+        // check for repeats
+
+        // var count = 0;
+        // if (hue_obj[hue]) {
+        //   count = hue_obj[hue].count + 1;
+        // }
+        // hue_obj[hue] = {
+        //   i: i,
+        //   count: count
+        // }
+        // if (hue < 20) {
+        //   console.log(i, hue);
+        // }
+
+
+
+        if (i > 0 && i % (144) == 0) {
+          saturation = saturation + 4;
+        }
+        if (i > 0 && i % (144) == 0) {
+          lightness = lightness - 2;
+        }
+        if (i === 0) {
+          hue;
+        }
+        else {
+          hue = (hue + golden_angle) % 360;
+        }
+
+        // hue_array.push(hue);
+        hue_array.push( (Math.pow( (hue-178.71), 2)) );// (Math.pow( ((hue) - 178.71) ), 2) );
+        listColors(i, hue, saturation, lightness);
+        // this method gets us to 144 colors before repeating and is way simpler
+
+
+      });
+
+
+      hue = 0; //Math.random() * 360;
+      lightness = 50;
+      saturation = 50;
+
+
+      count.forEach(function(d, i) {
+
+        // check for repeats
+        // hue_array2.push({i: i, hue: hue});
+        // var count = 0;
+        // if (hue_obj[Math.round(hue*360)]) {
+        //   count = hue_obj[Math.round(hue*360)].count + 1;
+        // }
+        // hue_obj[Math.round(hue*360)] = {
+        //   i: i,
+        //   count: count
+        // }
+        // if (Math.round(hue*360) < 20) {
+        //   console.log(i, Math.round(hue*360));
+        // }
+
+        hue += golden_ratio;
+        hue %= 1;
+        // hue = hue*360;
+        // hue = Math.round(hue);
+
+        hue_array2.push(Math.round(hue*360));
+        // hue_array2.push( Math.pow( ((hue*360)-180.08), 2)  );
+        listColors2(i, Math.round(hue*360), saturation, lightness);
+        // this method gets us to 144 colors before repeating and is way simpler
+        // hue = (hue + golden_angle) % 360;
+
+      });
+
+
+      for (key in hue_obj) {
+        // console.log(key)
+        if (hue_obj[key].hasOwnProperty('count') && hue_obj[key].count > 1) {
+          console.log(key, hue_obj[key]);
+        }
+      }
+
+
+// var wd = window.innerWidth;
+// var ht = window.innerHeight;
+// /**
+//  * HSV to RGB color conversion
+//  *
+//  * H runs from 0 to 360 degrees
+//  * S and V run from 0 to 100
+//  *
+//  * Ported from the excellent java algorithm by Eugene Vishnevsky at:
+//  * http://www.cs.rit.edu/~ncs/color/t_convert.html
+//  */
+// function hsvToRgb(h, s, v) {
+//     var r, g, b;
+//     var i;
+//     var f, p, q, t;
+//
+//     // Make sure our arguments stay in-range
+//     h = Math.max(0, Math.min(360, h));
+//     s = Math.max(0, Math.min(100, s));
+//     v = Math.max(0, Math.min(100, v));
+//
+//     // We accept saturation and value arguments from 0 to 100 because that's
+//     // how Photoshop represents those values. Internally, however, the
+//     // saturation and value are calculated from a range of 0 to 1. We make
+//     // That conversion here.
+//     s /= 100;
+//     v /= 100;
+//
+//     if (s == 0) {
+//         // Achromatic (grey)
+//         r = g = b = v;
+//         return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+//     }
+//
+//     h /= 60; // sector 0 to 5
+//     i = Math.floor(h);
+//     f = h - i; // factorial part of h
+//     p = v * (1 - s);
+//     q = v * (1 - s * f);
+//     t = v * (1 - s * (1 - f));
+//
+//     switch (i) {
+//         case 0:
+//             r = v;
+//             g = t;
+//             b = p;
+//             break;
+//
+//         case 1:
+//             r = q;
+//             g = v;
+//             b = p;
+//             break;
+//
+//         case 2:
+//             r = p;
+//             g = v;
+//             b = t;
+//             break;
+//
+//         case 3:
+//             r = p;
+//             g = q;
+//             b = v;
+//             break;
+//
+//         case 4:
+//             r = t;
+//             g = p;
+//             b = v;
+//             break;
+//
+//         default:
+//             // case 5:
+//             r = v;
+//             g = p;
+//             b = q;
+//     }
+//
+//     return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+// }
+//
+// buildLine();
+//
+// function buildLine() {
+//     var info, j = 0;
+//     var h = 0;
+//     var h2 = h,
+//         cols;
+//     var golden_ratio_conjugate = 0.618033988749895;
+//     for (var i = 0; i < 1024; i++) {
+//         info = document.createElement('div');
+//         info.className = 'stuff';
+//         info.style.border = '1px #000 solid';
+//         info.style.borderRadius = '8px';
+//         info.style.cssFloat = 'left';
+//         info.style.left = i * 110 + 'px';
+//         info.style.width = wd / 8 + 'px';
+//         info.style.height = '100px';
+//         info.style.padding = '5px';
+//         info.style.textAlign = 'center';
+//
+//         h += golden_ratio_conjugate;
+//         h %= 1;
+//         //cols = hsvToRgb(360 * h, 60, 85);
+//         info.style.background = 'hsl('+360 * h +', 60%, 85%)'; //'rgb(' + cols + ')';
+//
+//         // listColors2(i, h*360, 50, 50);
+//
+//         // info.style.opacity = '0.9';
+//         info.style.margin = '15px';
+//         info.innerHTML = 'hsl('+360 * h +', 60%, 85%)'; //cols + '<br>' + h.toFixed() + '<br>' + ++j;
+//         document.body.appendChild(info);
+//     }
+//     // info.style.clear = 'both';
+//     info = document.createElement('div');
+//     info.style.cssFloat = 'left';
+//     info.innerHTML = ' break' + '<br><br>';
+//     info.style.width = wd + 'px';
+//     document.body.appendChild(info);
+// }
+
+
+    </script>
+
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-53115940-1', 'auto');
+      ga('send', 'pageview');
+      ga('set', '&uid', 'UA-53115940-1');
+
+    </script>
+
+  </body>
+</html>

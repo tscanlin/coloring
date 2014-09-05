@@ -1,0 +1,17 @@
+{
+  "name": "coloring.js",
+  "version": "0.0.0",
+  "description": "A small color generation and conversion library.",
+  "main": "coloring.js",
+  "scripts": {
+    "test": "jasmine"
+  },
+  "keywords": [
+    "color",
+    "generation",
+    "conversion",
+    "library"
+  ],
+  "author": "Tim Scanlin",
+  "license": "MIT"
+}
