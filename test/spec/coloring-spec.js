@@ -1,5 +1,11 @@
-describe("Coloring", function(window) {
-  // if (window === undefined) coloring = require('./coloring.js');
+var coloring = coloring;
+
+describe("Coloring", function() {
+  // For node.js
+  if (!coloring) {
+    coloring = require('../../coloring');
+  }
+
   var color, coloringjs = coloring;
 
   beforeEach(function() {

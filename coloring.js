@@ -1,4 +1,4 @@
-(function (window) {
+(function() {
 
   'use strict';
 
@@ -422,4 +422,4 @@
     window.coloring = coloring;
   }
 
-})(window);
+})();
