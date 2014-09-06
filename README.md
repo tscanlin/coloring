@@ -180,5 +180,7 @@ Outputs current color as a RGB text string. Ex: 'rgb(200, 150, 100)'.
 ## Acknowledgement
 
 Some of the color conversion functions were copied from: https://github.com/bgrins/TinyColor.
+
 Which had been modified from: http://web.archive.org/web/20081227003853/http://mjijackson.com/2008/02/rgb-to-hsl-and-rgb-to-hsv-color-model-conversion-algorithms-in-javascript
+
 Which are based on formulas found on Wikipedia: http://en.wikipedia.org/wiki/HSL_and_HSV
