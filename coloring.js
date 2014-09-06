@@ -133,6 +133,33 @@
       return this;
     },
 
+    settings: function(obj) {
+      // Get.
+      if (!arguments.length) {
+        var ret = {};
+        for (var key in this) {
+          if (this[key] !== undefined) {
+            var func = this[key].bind(this);
+            // Just to be sure its a function.
+            if (typeof(func) == "function") ret[key] = func();
+          }
+        }
+        return ret;
+      }
+      // Set.
+      else if (typeof obj === 'object') {
+        for (var key2 in obj) {
+          if (this[key2] !== undefined) {
+            var func2 = this[key2].bind(this);
+            // Just to be sure its a function.
+            if (typeof(func2) == "function") func2(obj[key2]);
+          }
+        }
+      }
+
+      return this;
+    },
+
     startHue: function(int) {
       if (!arguments.length) return this._startHue;
       if (!isNaN(int)) this._startHue = int;
@@ -189,13 +216,16 @@
     parse: function(str) {
       var arr = [];
       var hslObj = {};
+      var h = this._h;
+      var s = this._s;
+      var l = this._l;
 
       // Parse HSL & HSLA.
       if (str.indexOf('hsl') > -1) {
         arr = str.replace(/[^\d.,]/g, '').split(',');
-        this._h = +arr[0];
-        this._s = +arr[1];
-        this._l = +arr[2];
+        this._h = parseInt(arr[0]);
+        this._s = parseInt(arr[1]);
+        this._l = parseInt(arr[2]);
         if (arr[3] !== undefined) this._a = +arr[3];
       }
       // Parse RGB & RGBA.
@@ -210,6 +240,11 @@
       // Parse HEX.
       else if (str.indexOf('#') > -1) {
         arr = str.split('#')[1].match(/.{1,2}/g);
+        // Add support for parsing 3 character hex codes.
+        if (str.length < 5) {
+          arr = str.split('#')[1];
+          arr = arr.split('').map(function(l) { return ''+l+l; });
+        }
         hslObj = rgbToHsl(parseIntFromHex(arr[0]), parseIntFromHex(arr[1]), parseIntFromHex(arr[2]));
         this._h = Math.round(hslObj.h * MAX_HUE);
         this._s = Math.round(hslObj.s * 100);
@@ -217,6 +252,21 @@
       }
       else {
         console.log('[coloring.js] Unable to parse color.');
+      }
+
+      if (isNaN(this._h)) {
+        this._h = h;
+        console.log('[coloring.js] Unable to parse hue.');
+      }
+
+      if (isNaN(this._s)) {
+        this._s = s;
+        console.log('[coloring.js] Unable to parse saturation.');
+      }
+
+      if (isNaN(this._l)) {
+        this._l = l;
+        console.log('[coloring.js] Unable to parse lightness.');
       }
 
       return this;
