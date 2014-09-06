@@ -4,38 +4,37 @@
 
   /*global define, module, exports, require */
 
-  // can take an options object.
   // can take string to convert to whatever.
   // error catching for bad colors#####################
+  // rnadom start hue option
 
   // Many of the color conversion functions have been taken from:
   // TinyColor.js: https://github.com/bgrins/TinyColor
 
   var GOLDEN_ANGLE = 137.5;
   var GOLDEN_RATIO = 0.61803398875;
+  var MAX_HUE = 360;
 
-  var coloringjs, Coloringjs;
-
-  coloringjs = Coloringjs = function coloringjs(input) {
+  var coloring, Coloring;
+  coloring = Coloring = function coloring(input) {
     var num, string, obj;
 
-    if (!(this instanceof coloringjs)) {
-      return new Coloringjs(input);
+    if (!(this instanceof coloring)) {
+      return new Coloring(input);
     }
 
-    this.version = '0.0.1';
+    this.version = '0.0.5';
 
-    this.colorFunction = 'ratio';
-    this.cycleThreshold = 144;
-    this.format = 'hsl';
+    this._colorFunction = 'ratio';
+    this._cycleThreshold = 144;
+    this._format = 'hsl';
 
-    this.incrementLightness = -2;
-    this.incrementSaturation = 4;
+    this._incrementLightness = -2;
+    this._incrementSaturation = 4;
 
-    this.maxHue = 360;
-    this.startHue = 0;
-    this.startSaturation = 50;
-    this.startLightness = 50;
+    this._startHue = 0;
+    this._startSaturation = 50;
+    this._startLightness = 50;
 
     this._h = 0;
     this._s = 0;
@@ -44,7 +43,7 @@
 
     if (!isNaN(input)) {
       num = input || 0;
-      return this.color(num);
+      return this.generate(num);
     }
     else if (typeof input === 'string') {
       string = input;
@@ -54,7 +53,9 @@
       obj = input;
       for (var key in obj) {
         if (this[key] !== undefined) {
-          this[key] = obj[key];
+          var func = this[key].bind(this);
+          // Just to be sure its a function.
+          if (typeof(func) == "function") func(obj[key]);
         }
       }
       return this;
@@ -66,61 +67,123 @@
       console.log('[coloring.js] Invalid input.');
       return this;
     }
-
   };
 
-  coloringjs.prototype = {
+  coloring.prototype = {
 
-    getAlpha: function() {
-      return this._a;
+    hue: function(int) {
+      if (!arguments.length) return this._h;
+      if (!isNaN(int)) this._h = int % MAX_HUE;
+      return this;
     },
 
-    setAlpha: function(value) {
-      var a = parseFloat(value);
+    saturation: function(int) {
+      if (!arguments.length) return this._s;
+      if (!isNaN(int)) this._s = int;
+      return this;
+    },
+
+    lightness: function(int) {
+      if (!arguments.length) return this._l;
+      if (!isNaN(int)) this._l = int;
+      return this;
+    },
+
+    alpha: function(float) {
+      if (!arguments.length) return this._a;
+      var a = parseFloat(float);
       if (isNaN(a) || a < 0 || a > 1) {
         a = 1;
       }
       this._a = a;
-
       return this;
     },
 
-    color: function(i) {
+    colorFunction: function(func) {
+      if (!arguments.length) return this._colorFunction;
+      if (func == 'ratio' || func == 'angle') {
+        this._colorFunction = func;
+      }
+      return this;
+    },
+
+    cycleThreshold: function(threshold) {
+      if (!arguments.length) return this._cycleThreshold;
+      if (!isNaN(int)) this._cycleThreshold = threshold;
+      return this;
+    },
+
+    format: function(format) {
+      if (!arguments.length) return this._format;
+      if (format == 'hsl' || format == 'rgb' || format == 'hex') {
+        this._format = format;
+      }
+      return this;
+    },
+
+    incrementLightness: function(int) {
+      if (!arguments.length) return this._incrementLightness;
+      if (!isNaN(int)) this._incrementLightness = int;
+      return this;
+    },
+
+    incrementSaturation: function(int) {
+      if (!arguments.length) return this._incrementSaturation;
+      if (!isNaN(int)) this._incrementSaturation = int;
+      return this;
+    },
+
+    startHue: function(int) {
+      if (!arguments.length) return this._startHue;
+      if (!isNaN(int)) this._startHue = int;
+      return this;
+    },
+
+    startSaturation: function(int) {
+      if (!arguments.length) return this._startSaturation;
+      if (!isNaN(int)) this._startSaturation = int;
+      return this;
+    },
+
+    startLightness: function(int) {
+      if (!arguments.length) return this._startLightness;
+      if (!isNaN(int)) this._startLightness = int;
+      return this;
+    },
+
+    generate: function(i) {
       var n;
-      var loops = Math.round(i / this.cycleThreshold);
-      this._h = this.startHue;
-      this._s = this.startSaturation;
-      this._l = this.startLightness;
+      var loops = Math.round(i / this._cycleThreshold);
+      this._h = this._startHue;
+      this._s = this._startSaturation;
+      this._l = this._startLightness;
 
       // Color function with the Golden Ratio.
-      if (this.colorFunction == 'ratio') {
+      if (this._colorFunction == 'ratio') {
         for (n = 0; n <= i; n++) {
           this._h += GOLDEN_RATIO;
           this._h %= 1;
         }
-        this._h = Math.round(this._h * 360);
+        this._h = Math.round(this._h * MAX_HUE);
       }
-
       // Color function with the Golden Angle.
-      else if (this.colorFunction == 'angle') {
+      else if (this._colorFunction == 'angle') {
         if (i !== 0) {
-          this._h = (GOLDEN_ANGLE * i) % this.maxHue;
+          this._h = (GOLDEN_ANGLE * i) % MAX_HUE;
         }
       }
-
       else {
         console.warn('[coloring.js] Unknown color function.');
       }
 
       // This keeps colors unique even at very high values of i.
       // By changing both the saturation and the lightness.
-      if (i >= this.cycleThreshold || i % this.cycleThreshold === 0) {
-        this._s += (this.incrementSaturation) * loops;
-        this._l += (this.incrementLightness) * loops;
+      if (i >= this._cycleThreshold || i % this._cycleThreshold === 0) {
+        this._s += (this._incrementSaturation) * loops;
+        this._l += (this._incrementLightness) * loops;
       }
 
       return this;
-      // return 'hsl: '+ this.toHslString() + ' // rgb: ' + this.toRgbString() + ' // hex: ' + this.();
     },
 
     parse: function(str) {
@@ -139,7 +202,7 @@
       else if (str.indexOf('rgb') > -1) {
         arr = str.replace(/[^\d.,]/g, '').split(',');
         hslObj = rgbToHsl(arr[0], arr[1], arr[2]);
-        this._h = Math.round(hslObj.h * 360);
+        this._h = Math.round(hslObj.h * MAX_HUE);
         this._s = Math.round(hslObj.s * 100);
         this._l = Math.round(hslObj.l * 100);
         if (arr[3] !== undefined) this._a = +arr[3];
@@ -148,7 +211,7 @@
       else if (str.indexOf('#') > -1) {
         arr = str.split('#')[1].match(/.{1,2}/g);
         hslObj = rgbToHsl(parseIntFromHex(arr[0]), parseIntFromHex(arr[1]), parseIntFromHex(arr[2]));
-        this._h = Math.round(hslObj.h * 360);
+        this._h = Math.round(hslObj.h * MAX_HUE);
         this._s = Math.round(hslObj.s * 100);
         this._l = Math.round(hslObj.l * 100);
       }
@@ -160,7 +223,7 @@
     },
 
     toString: function(format) {
-      format = format || this.format;
+      format = format || this._format;
 
       if (format === "hsl") {
         return this.toHslString();
@@ -206,14 +269,15 @@
         "rgb("  + r + ", " + g + ", " + b + ")" :
         "rgba(" + r + ", " + g + ", " + b + ", " + this._a + ")";
     }
-
   };
 
-
+  // The below functions were copied from: https://github.com/bgrins/TinyColor
+  // Which had been modified from: http://web.archive.org/web/20081227003853/http://mjijackson.com/2008/02/rgb-to-hsl-and-rgb-to-hsv-color-model-conversion-algorithms-in-javascript
+  // Which are based on formulas found on Wikipedia: http://en.wikipedia.org/wiki/HSL_and_HSV
   function hslToRgb(h, s, l) {
     var r, g, b;
 
-    h = bound01(h, 360);
+    h = bound01(h, MAX_HUE);
     s = bound01(s, 100);
     l = bound01(l, 100);
 
@@ -307,28 +371,17 @@
   function pad2(c) {
     return c.length == 1 ? '0' + c : '' + c;
   }
-
-
-  window.c = coloringjs(2);
-  coloringjs({a: 123, _a: 0.2});
-  console.log(coloringjs().toString());
-  // console.log(c.color(2));
-
-  // console.log(c.parse('rgba(191, 64, 176)'));
-  // console.log(c.parse('hsl(20, 50%, 50%)'));
-  // console.log(c.parse('#00CC00'));
-
-
+  // End copied formulas.
 
   // Node.js export.
   if (typeof module !== "undefined" && module.exports) {
-    module.exports = coloringjs;
+    module.exports = coloring;
   }
   else if (typeof define === 'function' && define.amd) {
-    define(function () {return coloringjs;});
+    define(function () {return coloring;});
   }
   else {
-    window.coloringjs = coloringjs;
+    window.coloring = coloring;
   }
 
 })(window);
