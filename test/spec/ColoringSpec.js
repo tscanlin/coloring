@@ -1,4 +1,5 @@
-describe("Coloring", function() {
+describe("Coloring", function(window) {
+  // if (window === undefined) coloring = require('./coloring.js');
   var color, coloringjs = coloring;
 
   beforeEach(function() {
@@ -14,10 +15,17 @@ describe("Coloring", function() {
     expect(color._a).toBe(1);
   });
 
-  describe("when passed a parameter", function() {
+  it("should have these default settings", function() {
+    color = coloring();
+    expect(color._colorFunction).toBe("ratio");
+    expect(color._cycleThreshold).toBe(144);
+    expect(color._format).toBe("hsl");
+    expect(color._startHue).toBe(0);
+    expect(color._startSaturation).toBe(50);
+    expect(color._startLightness).toBe(50);
   });
 
-  describe("when calling different methods", function() {
+  describe("Methods", function() {
 
     describe(".generate() should", function() {
       it("generate well distributed colors with the GOLDEN RATIO algorithm", function() {
@@ -251,7 +259,31 @@ describe("Coloring", function() {
       });
     });
 
-    describe(".settings() and other Get/Set methods should", function() {
+    describe(".settings() and other Get/Set methods", function() {
+      it("set settings with an object", function() {
+        color = coloring();
+
+        expect(color.format()).toBe('hsl');
+        expect(color.colorFunction()).toBe('ratio');
+
+        color.settings({ format: 'hex', colorFunction: 'angle' });
+
+        expect(color.format()).toBe('hex');
+        expect(color.colorFunction()).toBe('angle');
+      });
+
+      it("set settings with get/set methods", function() {
+        color = coloring();
+
+        color.format('rgb');
+        expect(color.format()).toBe('rgb');
+
+        expect(color.colorFunction()).toBe('ratio');
+        color.colorFunction('angle');
+        expect(color.colorFunction()).toBe('angle');
+        color.colorFunction('ratio');
+        expect(color.colorFunction()).toBe('ratio');
+      });
 
     });
 

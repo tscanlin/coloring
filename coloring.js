@@ -4,12 +4,7 @@
 
   /*global define, module, exports, require */
 
-  // can take string to convert to whatever.
-  // error catching for bad colors#####################
-  // rnadom start hue option
-
-  // Many of the color conversion functions have been taken from:
-  // TinyColor.js: https://github.com/bgrins/TinyColor
+  // TODO: random start hue option
 
   var GOLDEN_ANGLE = 137.5;
   var GOLDEN_RATIO = 0.61803398875;
@@ -51,14 +46,7 @@
     }
     else if (typeof input === 'object') {
       obj = input;
-      for (var key in obj) {
-        if (this[key] !== undefined) {
-          var func = this[key].bind(this);
-          // Just to be sure its a function.
-          if (typeof(func) == "function") func(obj[key]);
-        }
-      }
-      return this;
+      return this.settings(obj);
     }
     else if (input === undefined) {
       return this;
