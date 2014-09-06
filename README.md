@@ -11,13 +11,13 @@ You can download the library and include it on your page like so:
 ~~~ html
 <script type='text/javascript' src='coloring.js'></script>
 <script type='text/javascript'>
-var color = coloringjs(0);
+var color = coloring(0);
 </script>
 ~~~
 
 ~~~ js
-var coloringjs = require("./coloringjs");
-var color = coloringjs(0);
+var coloring = require("./coloring");
+var color = coloring(0);
 ~~~
 
 ## Usage
@@ -86,116 +86,99 @@ coloring().generate(3).toString();
 
 This would get/set the alpha/opacity.
 
+
 **.hue([int])**
 
 This would get/set the current hue value.
+
 
 **.saturation([int])**
 
 This would get/set the current saturation value.
 
+
 **.lightness([int])**
 
 This would get/set the current lightness value.
 
+
 **.colorFunction([string])**
 
-This can be used to change the color function between 'ratio' or 'angle'.
-
-cycleThreshold: function(threshold) {
-  if (!arguments.length) return this._cycleThreshold;
-  if (!isNaN(int)) this._cycleThreshold = threshold;
-  return this;
-},
-
-format: function(format) {
-  if (!arguments.length) return this._format;
-  if (format == 'hsl' || format == 'rgb' || format == 'hex') {
-    this._format = format;
-  }
-  return this;
-},
-
-incrementLightness: function(int) {
-  if (!arguments.length) return this._incrementLightness;
-  if (!isNaN(int)) this._incrementLightness = int;
-  return this;
-},
-
-incrementSaturation: function(int) {
-  if (!arguments.length) return this._incrementSaturation;
-  if (!isNaN(int)) this._incrementSaturation = int;
-  return this;
-},
-
-settings: function(obj) {
-
-},
-
-startHue: function(int) {
-  if (!arguments.length) return this._startHue;
-  if (!isNaN(int)) this._startHue = int;
-  return this;
-},
-
-startSaturation: function(int) {
-  if (!arguments.length) return this._startSaturation;
-  if (!isNaN(int)) this._startSaturation = int;
-  return this;
-},
-
-startLightness: function(int) {
-  if (!arguments.length) return this._startLightness;
-  if (!isNaN(int)) this._startLightness = int;
-  return this;
-},
-
-generate: function(i) {
-
-},
-
-parse: function(str) {
-
-},
-
-toString: function(format) {
-
-},
-
-toHexString: function() {
-  var rgbObj = hslToRgb(this._h, this._s, this._l);
-  var r = Math.round(rgbObj.r);
-  var g = Math.round(rgbObj.g);
-  var b = Math.round(rgbObj.b);
-  var hexCode = rgbToHex(r, g, b);
-
-  return '#' + hexCode;
-},
-
-toHslString: function() {
-  var h = (this._h);
-  var s = (this._s);
-  var l = (this._l);
-
-  return (this._a == 1) ?
-    "hsl("  + h + ", " + s + "%, " + l + "%)" :
-    "hsla(" + h + ", " + s + "%, " + l + "%, "+ this._a + ")";
-},
-
-toRgbString: function() {
-  var rgbObj = hslToRgb(this._h, this._s, this._l);
-  var r = Math.round(rgbObj.r);
-  var g = Math.round(rgbObj.g);
-  var b = Math.round(rgbObj.b);
-
-  return (this._a == 1) ?
-    "rgb("  + r + ", " + g + ", " + b + ")" :
-    "rgba(" + r + ", " + g + ", " + b + ", " + this._a + ")";
-}
+This can be used to change the color function between 'ratio' or 'angle'. Defaults to 'ratio'.
 
 
-## Examples
+**.cycleThreshold([int])**
 
+This changes the threshold at which point the color generate function starts to change the saturation / lightness in order to not repeat colors. Defaults to 144 (recommended).
+
+
+**.format([string])**
+
+This would get/set the format. Possible values are 'hsl', 'hex', 'rgb'. Defaults to 'hsl'.
+
+
+**.incrementLightness([int])**
+
+This changes the lightness increment that's used together with the cycleThreshold to make sure colors don't repeat. Defaults to -2.
+
+
+**.incrementSaturation([int])**
+
+This changes the saturation increment that's used together with the cycleThreshold to make sure colors don't repeat. Defaults to 4.
+
+
+**.settings([obj])**
+
+This accepts an object and can be used to set different settings.
+
+
+**.startHue([int])**
+
+This can be used to get/set the starting hue value. Defaults to 0.
+
+
+**.startSaturation([int])**
+
+This can be used to get/set the starting saturation value. Defaults to 50.
+
+
+**.startLightness([int])**
+
+This can be used to get/set the starting lightness value. Defaults to 50.
+
+
+**.generate(i)**
+
+Accepts an integer and returns a color value (you still need to use toString() to get the output).
+
+
+**.parse(str)**
+
+Accepts a text color string in '#EF00BA', 'rgba(100, 150, 250, 0.3)', or 'hsl(40, 50%, 60%)', etc. forms. Currently only supports (HSL(A), RGB(A), or HEX).
+
+
+**.toString([format])**
+
+If no format parameter is specified than output to the default or preset _format value. Can be 'hsl', 'rgb', or 'hex'.
+
+
+**.toHexString()**
+
+Outputs current color as a HEX text string. Ex: '#CCFF00'.
+
+
+**.toHslString()**
+
+Outputs current color as a HSL text string. Ex: 'hsl(200, 50%, 40%)'.
+
+
+**.toRgbString()**
+
+Outputs current color as a RGB text string. Ex: 'rgb(200, 150, 100)'.
 
 
 ## Acknowledgement
+
+Some of the color conversion functions were copied from: https://github.com/bgrins/TinyColor.
+Which had been modified from: http://web.archive.org/web/20081227003853/http://mjijackson.com/2008/02/rgb-to-hsl-and-rgb-to-hsv-color-model-conversion-algorithms-in-javascript
+Which are based on formulas found on Wikipedia: http://en.wikipedia.org/wiki/HSL_and_HSV
